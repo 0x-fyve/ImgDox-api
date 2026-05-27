@@ -6,6 +6,7 @@ from rest_framework import status
 
 from .models import Image
 
+
 from .serializers import Imageserializer
 # Create your views here.
 class UploadImageView(APIView):
@@ -22,3 +23,14 @@ class UploadImageView(APIView):
 
         return Response(serializer.errors,
                         status=status.HTTP_400_BAD_REQUEST)
+    
+class ListImagesView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+
+        images = Image.objects.filter(user=request.user)
+
+        serializer = Imageserializer(images, many=True)
+
+        return Response(serializer.data)
