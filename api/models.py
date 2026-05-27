@@ -9,6 +9,7 @@ class Edit(models.Model):
     image = models.ImageField(upload_to=None, height_field=None, width_field=None, max_length=None)
     height = models.IntegerField()
     width = models.IntegerField()
-    grayscale = models.BooleanField()
-    sepolia = models.BooleanField()
+    grayscale = models.BooleanField(default=False)
+    sepolia = models.BooleanField(default=False)
+    updated_at = models.DateTimeField( auto_now=False, auto_now_add=False)
     
