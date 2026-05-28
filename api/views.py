@@ -6,10 +6,10 @@ from rest_framework import status
 from django.shortcuts import  get_object_or_404
 
 from .models import Image
-
-
-from .serializers import Imageserializer
+from .serializers import Imageserializer, Resizeserializer
+from .services import resize_image
 # Create your views here.
+
 class UploadImageView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -45,4 +45,27 @@ class RetrieveImagesView(APIView):
         serializer = Imageserializer(image)
 
         return Response(serializer.data)
+    
+class ResizeImageView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        image = get_object_or_404(Image, id=pk, user=request.user)
+
+        serializer = Resizeserializer(data=request.data)
+
+        if serializer.is_valid():
+            width = serializer.validated_data["width"]
+            height = serializer.validated_data["height"]
+
+            new_path = resize_image(image.image.path, width, height)
+
+            return Response({
+                "resized_image": new_path
+            })
+
+        return Response(serializer.errors,
+                        status=status.HTTP_400_BAD_REQUEST)
+
+            
 

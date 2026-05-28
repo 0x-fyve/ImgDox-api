@@ -9,15 +9,11 @@ class Imageserializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = ["user"]
 
+class Resizeserializer(serializers.Serializer):
+    width = serializers.IntegerField()
+    height = serializers.IntegerField()
 
-
-class TransformImageserializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Edit
-        fields = "__all__"
-        read_only_fields = ["user"]        
-
+    
 
 
 
