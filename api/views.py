@@ -58,10 +58,13 @@ class ResizeImageView(APIView):
             width = serializer.validated_data["width"]
             height = serializer.validated_data["height"]
 
-            new_path = resize_image(image.image.path, width, height)
-
+            new_filename = resize_image(image.image.path, width, height)
+            
+            image_url = request.build_absolute_uri(
+                f"/media/uploads/{new_filename}"
+            )           
             return Response({
-                "resized_image": new_path
+                "resized_image": image_url
             })
 
         return Response(serializer.errors,
