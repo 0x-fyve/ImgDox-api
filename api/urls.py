@@ -7,5 +7,5 @@ urlpatterns = [
     path("images/<int:pk>/", RetrieveImagesView.as_view()),
     path("images/<int:pk>/resize/", ResizeImageView.as_view()),
     path("images/<int:pk>/rotate/", RotateImageView.as_view()),
-    path("images/<int:pk>/rotate/", GrayscaleImageView.as_view()),
+    path("images/<int:pk>/grayscale/", GrayscaleImageView.as_view()),
 ]

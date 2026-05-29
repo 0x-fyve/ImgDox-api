@@ -111,7 +111,7 @@ class GrayscaleImageView(APIView):
             user=request.user
         )
 
-        new_file = grayscale_image(image.image.path)
+        new_filename = grayscale_image(image.image.path)
 
         image_url = request.build_absolute_uri(
             f"/media/uploads/{new_filename}"
