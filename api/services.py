@@ -75,3 +75,32 @@ def sepia_image(image_path):
 
     return new_filename
 
+from PIL import Image
+import os
+
+
+def convert_image_format(image_path, new_format):
+
+    img = Image.open(image_path)
+
+    base_dir = os.path.dirname(image_path)
+    base_name = os.path.splitext(
+        os.path.basename(image_path)
+    )[0]
+
+    extension = new_format.lower()
+
+    if extension == "jpeg":
+        extension = "jpg"
+
+    new_filename = f"{base_name}.{extension}"
+
+    new_path = os.path.join(base_dir, new_filename)
+
+    # JPEG doesn't support transparency
+    if new_format == "JPEG":
+        img = img.convert("RGB")
+
+    img.save(new_path, new_format)
+
+    return new_filename

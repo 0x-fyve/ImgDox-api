@@ -16,7 +16,11 @@ class Resizeserializer(serializers.Serializer):
 class Rotateserializer(serializers.Serializer):
     angle= serializers.IntegerField()
 
+class FormatSerializer(serializers.Serializer):
 
+    format = serializers.ChoiceField(
+        choices=["JPEG", "PNG", "WEBP"]
+    )
 
     
 

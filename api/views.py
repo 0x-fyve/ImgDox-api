@@ -6,8 +6,8 @@ from rest_framework import status
 from django.shortcuts import  get_object_or_404
 
 from .models import Image
-from .serializers import Imageserializer, Resizeserializer, Rotateserializer
-from .services import resize_image, rotate_image, grayscale_image, sepia_image
+from .serializers import Imageserializer, Resizeserializer, Rotateserializer, FormatSerializer
+from .services import resize_image, rotate_image, grayscale_image, sepia_image, convert_image_format
 # Create your views here.
 
 class UploadImageView(APIView):
@@ -141,5 +141,37 @@ class SepiaImageView(APIView):
             "sepia_img": image_url
         })
 
+class ConvertFormatView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+
+        image = get_object_or_404(
+            Image,
+            id=pk,
+            user=request.user
+        )
+
+        serializer = FormatSerializer(data=request.data)
+
+        if serializer.is_valid():
+
+            new_format = serializer.validated_data["format"]
+
+            new_filename = convert_image_format(
+                image.image.path,
+                new_format
+            )
+
+            image_url = request.build_absolute_uri(
+                f"/media/uploads/{new_filename}"
+            )
+
+            return Response({
+                "converted_image": image_url
+            })
+
+        return Response(serializer.errors,
+                        status=400)
 
 
