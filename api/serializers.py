@@ -22,6 +22,12 @@ class FormatSerializer(serializers.Serializer):
         choices=["JPEG", "PNG", "WEBP"]
     )
 
+class CropSerializer(serializers.Serializer):
+    width = serializers.IntegerField()
+    height = serializers.IntegerField()
+    x = serializers.IntegerField()
+    y = serializers.IntegerField()    
+
     
 
 

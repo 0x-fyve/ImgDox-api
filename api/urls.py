@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import UploadImageView, ListImagesView, RetrieveImagesView, ResizeImageView, RotateImageView
-from .views import SepiaImageView, GrayscaleImageView, ConvertFormatView
+from .views import SepiaImageView, GrayscaleImageView, ConvertFormatView, CropImageView
 
 urlpatterns = [
     path("images/", UploadImageView.as_view()),
@@ -11,5 +11,5 @@ urlpatterns = [
     path("images/<int:pk>/grayscale/", GrayscaleImageView.as_view()),
     path("images/<int:pk>/sepia/", SepiaImageView.as_view()),
     path("images/<int:pk>/format/", ConvertFormatView.as_view()),
-    
+    path("images/<int:pk>/crop/", CropImageView.as_view()),
 ]

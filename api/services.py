@@ -75,9 +75,6 @@ def sepia_image(image_path):
 
     return new_filename
 
-from PIL import Image
-import os
-
 
 def convert_image_format(image_path, new_format):
 
@@ -102,5 +99,26 @@ def convert_image_format(image_path, new_format):
         img = img.convert("RGB")
 
     img.save(new_path, new_format)
+
+    return new_filename
+
+def crop_image(image_path, width, height, x, y):
+    
+    img = Image.open(image_path)
+
+    cropped = img.crop(
+        (x, y, x + width, y + height)
+    )
+
+    base_dir = os.path.dirname(image_path)
+    base_name, ext = os.path.splitext(
+        os.path.basename(image_path)
+    )
+
+    new_filename = f"{base_name}_cropped{ext}"
+
+    new_path = os.path.join(base_dir, new_filename)
+
+    cropped.save(new_path)
 
     return new_filename

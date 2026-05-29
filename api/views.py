@@ -6,8 +6,8 @@ from rest_framework import status
 from django.shortcuts import  get_object_or_404
 
 from .models import Image
-from .serializers import Imageserializer, Resizeserializer, Rotateserializer, FormatSerializer
-from .services import resize_image, rotate_image, grayscale_image, sepia_image, convert_image_format
+from .serializers import Imageserializer, Resizeserializer, Rotateserializer, FormatSerializer, CropSerializer
+from .services import resize_image, rotate_image, grayscale_image, sepia_image, convert_image_format, crop_image
 # Create your views here.
 
 class UploadImageView(APIView):
@@ -169,6 +169,42 @@ class ConvertFormatView(APIView):
 
             return Response({
                 "converted_image": image_url
+            })
+
+        return Response(serializer.errors,
+                        status=400)
+    
+class CropImageView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+
+        image = get_object_or_404(
+            Image,
+            id=pk,
+            user=request.user
+        )
+
+        serializer = CropSerializer(data=request.data)
+
+        if serializer.is_valid():
+
+            data = serializer.validated_data
+
+            new_filename = crop_image(
+                image.image.path,
+                data["width"],
+                data["height"],
+                data["x"],
+                data["y"]
+            )
+
+            image_url = request.build_absolute_uri(
+                f"/media/uploads/{new_filename}"
+            )
+
+            return Response({
+                "cropped_image": image_url
             })
 
         return Response(serializer.errors,
