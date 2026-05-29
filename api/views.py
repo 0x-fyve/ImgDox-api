@@ -7,7 +7,7 @@ from django.shortcuts import  get_object_or_404
 
 from .models import Image
 from .serializers import Imageserializer, Resizeserializer, Rotateserializer
-from .services import resize_image, rotate_image
+from .services import resize_image, rotate_image, grayscale_image
 # Create your views here.
 
 class UploadImageView(APIView):
@@ -100,3 +100,25 @@ class RotateImageView(APIView):
 
         return Response(serializer.errors,
                         status=status.HTTP_400_BAD_REQUEST)
+
+class GrayscaleImageView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        image = get_object_or_404(
+            Image,
+            id=pk,
+            user=request.user
+        )
+
+        new_file = grayscale_image(image.image.path)
+
+        image_url = request.build_absolute_uri(
+            f"/media/uploads/{new_filename}"
+        )
+
+        return Response({
+            "grayscale_image": image_url
+        })
+
+

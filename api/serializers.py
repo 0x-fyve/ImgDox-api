@@ -15,6 +15,9 @@ class Resizeserializer(serializers.Serializer):
 
 class Rotateserializer(serializers.Serializer):
     angle= serializers.IntegerField()
+
+
+
     
 
 

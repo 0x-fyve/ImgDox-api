@@ -36,3 +36,20 @@ def rotate_image(image_path, angle):
     rotated.save(new_path)
 
     return new_path
+
+def grayscale_image(image_path):
+
+    img = Image.open(image_path)
+
+    grayscale = img.convert("L")
+
+    base_dir = os.path.dirname(image_path)
+    base_name, ext = os.path.splitext(os.path.basename(image_path))
+
+    new_filename = f"{base_name}_gray{ext}"
+
+    new_path = os.path.join(base_dir, new_filename)
+
+    grayscale.save(new_path)
+
+    return new_filename
