@@ -6,8 +6,8 @@ from rest_framework import status
 from django.shortcuts import  get_object_or_404
 
 from .models import Image
-from .serializers import Imageserializer, Resizeserializer
-from .services import resize_image
+from .serializers import Imageserializer, Resizeserializer, Rotateserializer
+from .services import resize_image, rotate_image
 # Create your views here.
 
 class UploadImageView(APIView):
@@ -59,7 +59,7 @@ class ResizeImageView(APIView):
             height = serializer.validated_data["height"]
 
             new_filename = resize_image(image.image.path, width, height)
-            
+
             image_url = request.build_absolute_uri(
                 f"/media/uploads/{new_filename}"
             )           
@@ -71,4 +71,32 @@ class ResizeImageView(APIView):
                         status=status.HTTP_400_BAD_REQUEST)
 
             
+class RotateImageView(APIView):
+    permission_classes = [IsAuthenticated]
 
+    def post(self, request, pk):
+
+        image = get_object_or_404(
+            Image,
+            id=pk,
+            user=request.user
+        )
+
+        serializer = Rotateserializer(data=request.data)
+
+        if serializer.is_valid():
+
+            angle = serializer.validated_data["angle"]
+
+            new_path = rotate_image(image.image.path, angle)
+
+
+            return Response({
+                    "original": request.build_absolute_uri(image.image.url),
+                    "transformed": request.build_absolute_uri(
+                        "/media/" + new_path.split("media/")[-1]
+                    )
+            })
+
+        return Response(serializer.errors,
+                        status=status.HTTP_400_BAD_REQUEST)
