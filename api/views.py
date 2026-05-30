@@ -4,10 +4,11 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from django.shortcuts import  get_object_or_404
+import os
 
 from .models import Image
-from .serializers import Imageserializer, Resizeserializer, Rotateserializer, FormatSerializer, CropSerializer
-from .services import resize_image, rotate_image, grayscale_image, sepia_image, convert_image_format, crop_image
+from .serializers import Imageserializer, Resizeserializer, Rotateserializer, FormatSerializer, CropSerializer, TransformationSerializer
+from .services import resize_image, rotate_image, grayscale_image, sepia_image, convert_image_format,crop_image, apply_transformations
 # Create your views here.
 
 class UploadImageView(APIView):
@@ -211,3 +212,36 @@ class CropImageView(APIView):
                         status=400)
 
 
+class TransformImageView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+
+        image = get_object_or_404(
+            Image,
+            id=pk,
+            user=request.user
+        )
+
+        serializer = TransformationSerializer(
+            data=request.data.get("transformations", {})
+        )
+
+        if serializer.is_valid():
+
+            transformed_path = apply_transformations(
+                image.image.path,
+                serializer.validated_data
+            )
+
+            filename = os.path.basename(transformed_path)
+
+            image_url = request.build_absolute_uri(
+                f"/media/uploads/{filename}"
+            )
+
+            return Response({
+                "transformed_image": image_url
+            })
+
+        return Response(serializer.errors, status=400)
