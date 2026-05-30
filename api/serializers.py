@@ -28,6 +28,21 @@ class CropSerializer(serializers.Serializer):
     x = serializers.IntegerField()
     y = serializers.IntegerField()    
 
+class TransformationSerializer(serializers.Serializer):
+
+    resize = Resizeserializer(required=False)
+
+    rotate = serializers.IntegerField(required=False)
+
+    grayscale = serializers.BooleanField(required=False)
+
+    sepia = serializers.BooleanField(required=False)
+
+    format = serializers.ChoiceField(
+        choices=["JPEG", "PNG", "WEBP"],
+        required=False
+    )    
+
     
 
 

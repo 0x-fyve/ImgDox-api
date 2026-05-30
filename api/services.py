@@ -103,7 +103,7 @@ def convert_image_format(image_path, new_format):
     return new_filename
 
 def crop_image(image_path, width, height, x, y):
-    
+
     img = Image.open(image_path)
 
     cropped = img.crop(
@@ -122,3 +122,41 @@ def crop_image(image_path, width, height, x, y):
     cropped.save(new_path)
 
     return new_filename
+
+def apply_transformations(image_path, transformations):
+
+    current_path = image_path
+
+    if transformations.get("resize"):
+
+        resize_data = transformations["resize"]
+
+        current_path = resize_image(
+            current_path,
+            resize_data["width"],
+            resize_data["height"]
+        )
+
+    if transformations.get("rotate"):
+
+        current_path = rotate_image(
+            current_path,
+            transformations["rotate"]
+        )
+
+    if transformations.get("grayscale"):
+
+        current_path = grayscale_image(current_path)
+
+    if transformations.get("sepia"):
+
+        current_path = sepia_image(current_path)
+
+    if transformations.get("format"):
+
+        current_path = convert_image_format(
+            current_path,
+            transformations["format"]
+        )
+
+    return current_path
